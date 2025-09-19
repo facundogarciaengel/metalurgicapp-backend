@@ -1,0 +1,42 @@
+/generated/prisma
+
+# Dependencias
+node_modules/
+
+# Builds y artefactos
+dist/
+build/
+coverage/
+
+# Archivos de entorno
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Otros
+.tmp/

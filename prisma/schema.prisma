@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  ADMIN
+  OPERARIO
+}
+
+enum EstadoTrabajo {
+  PENDIENTE
+  EN_CURSO
+  FINALIZADO
+}
+
+model Usuario {
+  id           Int         @id @default(autoincrement())
+  dni          String      @unique
+  nombre       String
+  rol          Rol
+  hashPassword String
+  activo       Boolean     @default(true)
+  trabajos     Trabajo[]   @relation("AsignadoA")
+  partes       ParteHora[]
+}
+
+model Cliente {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  documento String?   @unique // DNI/CUIT
+  email     String?
+  telefono  String?
+  codigo    String    @unique @default(uuid())
+  trabajos  Trabajo[]
+
+  @@index([apellido, nombre])
+}
+
+model Trabajo {
+  id             Int           @id @default(autoincrement())
+  presupuestoNro String?       @unique
+  titulo         String
+  descripcion    String?
+  estado         EstadoTrabajo @default(PENDIENTE)
+  fechaCreacion  DateTime      @default(now())
+  inicio         DateTime?
+  fin            DateTime?
+  clienteId      Int
+  asignadoAId    Int?
+  cliente        Cliente       @relation(fields: [clienteId], references: [id])
+  asignadoA      Usuario?      @relation("AsignadoA", fields: [asignadoAId], references: [id])
+  partes         ParteHora[]
+
+  @@index([clienteId])
+  @@index([asignadoAId])
+  @@index([estado])
+}
+
+model ParteHora {
+  id         Int       @id @default(autoincrement())
+  trabajoId  Int
+  operarioId Int
+  inicio     DateTime
+  fin        DateTime?
+  nota       String?
+
+  trabajo  Trabajo @relation(fields: [trabajoId], references: [id])
+  operario Usuario @relation(fields: [operarioId], references: [id])
+
+  @@index([trabajoId])
+  @@index([operarioId])
+  @@index([inicio])
+}
